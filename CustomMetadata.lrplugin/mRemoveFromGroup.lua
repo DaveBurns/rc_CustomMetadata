@@ -1,0 +1,2 @@
+groups:removeFromGroup()
+return true

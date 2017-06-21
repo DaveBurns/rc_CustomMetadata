@@ -1,0 +1,2 @@
+groups:delete()
+return true

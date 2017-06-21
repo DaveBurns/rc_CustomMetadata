@@ -1,0 +1,314 @@
+--[[
+        Plugin configuration file, aka "advanced settings".
+        
+        *** General Instructions:
+        
+        - To comment out a line (make it ineffective), place '--' at the beginning of the line (without the apostrophes).
+        - Conversely, to un-comment a line (make it effective), remove the '--' at the beginning of the line.
+        
+        See *** Instructions below.
+--]]
+
+
+
+--[[
+        *** Instructions: Do not change this line:
+--]]
+local _t = {} -- initialize configuration table
+
+
+
+-- Max number of seconds to wait for exported photo to be in catalog before giving up.
+-- Increase this number if warnings are being logged that exported photos are not being seen added to the catalog.
+-- Decrease this number if exports are getting hung up for too long...
+_t.maxWait = 60
+
+
+
+--[[
+        *** Instructions:
+        
+        - edit name of field to be used for group properties, if you've changed it, or set to nil (or comment out) if you do not want grouping support.
+--]]
+_t.groupFieldId = 'groups'
+
+
+
+
+--[[
+        *** Instructions:
+        
+        - set preferences used when selecting group from photos in active sources.
+--]]
+_t.includeSubfolders = true
+_t.ignoreIfBuried = true
+
+
+
+--[[
+        *** Instructions:
+        
+        - edit names (id) of items to be exported as CSV.
+        - comment out items you don't want exported as CSV (or set to false instead - its your call...).
+--]]
+local _exportCsv = {}
+_exportCsv['groups'] = false
+_exportCsv['my_properties'] = false
+_exportCsv['my_notes_private'] = false
+_exportCsv['my_notes_public'] = true
+_exportCsv['my_to_do'] = false
+_exportCsv['my_edit_history'] = false
+_exportCsv['my_source_notes'] = true
+_exportCsv['my_content_notes'] = true
+_exportCsv['my_states'] = false
+
+_t.exportCsvDelim = "," -- delimiter / field separator. comma is default, but some prefer tab, for example: _t.exportCsvDelim = '\t' -- tab.
+_t.exportCsvWrap = ''   -- consider wrapping with double-quotes, e.g. _t.exportCsvWrap = '"' -- I wish I'd made this the default, but for backward compatibility reasons, default is blank.
+
+
+
+--[[
+        *** Instructions:
+        
+        - edit names (id) of items to be imported as CSV.
+        - comment out items you don't want imported from CSV (or set to false instead - its your call...).
+--]]
+local _importCsv = {}
+_importCsv['groups'] = false
+_importCsv['my_properties'] = true
+_importCsv['my_notes_private'] = true
+_importCsv['my_notes_public'] = true
+_importCsv['my_to_do'] = false
+_importCsv['my_edit_history'] = false
+_importCsv['my_source_notes'] = true
+_importCsv['my_content_notes'] = true
+_importCsv['my_states'] = false
+
+
+
+--[[
+        *** Instructions:
+        
+        - edit names (id) of items to be excluded from saving in xmp, and change '= false' to '= true'.
+          (if no items are to be excluded, then no action is required in this section)
+--]]
+local _metadataSaveExclusions = {}
+_metadataSaveExclusions['groups'] = false
+_metadataSaveExclusions['my_properties'] = false
+_metadataSaveExclusions['my_notes_private'] = false
+_metadataSaveExclusions['my_notes_public'] = false
+_metadataSaveExclusions['my_to_do'] = false
+_metadataSaveExclusions['my_edit_history'] = false
+_metadataSaveExclusions['my_source_notes'] = false
+_metadataSaveExclusions['my_content_notes'] = false
+_metadataSaveExclusions['my_states'] = false
+
+
+
+--[[
+        *** Instructions:
+        
+        - edit names (od) of items to be excluded from manual sync form.
+--]]
+
+
+
+--[[
+        *** Instructions: Generally its best to specify items to be excluded OR items to be included, not both.
+        I think most of the time specifying exclusions is preferred instead of specifying inclusions, but its up to you...
+        If inclusion is specified, all else are excluded by default.
+        If an item is specified to be excluded, it will be excluded, regardless of whether its also specified to be included.
+        
+        - edit names (id) of items to be included from saving in xmp.
+        
+        Note: this is provided for historical reasons, and as a convenience - normally not needed.
+--]]
+-- local _metadataSaveInclusions = {}
+-- _metadataSaveInclusions['my_notes_private'] = true
+-- _metadataSaveInclusions['my_notes_public'] = true
+-- _metadataSaveInclusions['my_to_do'] = true
+-- _metadataSaveInclusions['my_edit_history'] = true
+-- _metadataSaveInclusions['my_source_notes'] = true
+-- _metadataSaveInclusions['my_content_notes'] = true
+-- _metadataSaveInclusions['my_states'] = true
+
+
+
+--[[
+        *** Instructions: add items to be transferred from Lightroom's formatted metadata to custom metadata - for example:
+        
+        _transferFormattedMetadata['intellectualGenre'] = { 'my_edit_history', "" } -- transfer "intellectual genre" from Lr's formatted metadata to "my edit history" custom metadata property (id),
+        -- and if clearing source metadata, use the blank string "" to clear.
+
+
+        See the Lightroom SDK/API doc for names, @11/Oct/2011:
+        
+        keywordTags: (string) The list of keywords as shown in the Keyword Tags panel (with Enter Keywords selected). This is the exact set of tags that were directly applied to the photo without any filtering for "Show on Export" flags, etc.
+        keywordTagsForExport: (string) The list of keywords as shown in the Keyword Tags panel (with Will Export selected). First supported as of Lightroom 2.0. This removes tags that were meant to be hidden via "Show on Export" and inserts all of the parents and ancestor tags (except when silenced via "Export Containing Keywords").
+        fileName: (string) The leaf name of the file (for example, "myFile.jpg")
+        copyName: (string) The name associated with this copy
+        folderName: (string) The name of the folder the file is in
+        fileSize: (string) The formatted size of the file (for example, "6.01 MB")
+        fileType: (string) The user-visible file type (DNG, RAW, etc.)
+        rating: (number) The user rating of the file (number of stars)
+        label: (string) The name of assigned color label
+        title: (string) The title of photo
+        caption: (string) The caption for photo
+        dimensions: (string) The original dimensions of file (for example, "3072 x 2304")
+        croppedDimensions: (string) The cropped dimensions of file (for example, "3072 x 2304")
+        exposure: (string) The exposure summary (for example, "1/60 sec at f/2.8")
+        shutterSpeed: (string) The shutter speed (for example, "1/60 sec")
+        aperture: (string) The aperture (for example, "f/2.8")
+        brightnessValue: (string) The brightness value (HELP: need an example)
+        exposureBias: (string) The exposure bias/compensation (for example, "-2/3 EV")
+        flash: (string) Whether the flash fired or not (for example, "Did fire")
+        exposureProgram: (string) The exposure program (for example, "Aperture priority")
+        meteringMode: (string) The metering mode (for example, "Pattern")
+        isoSpeedRating: (string) The ISO speed rating (for example, "ISO 200")
+        focalLength: (string) The focal length of lens as shot (for example, "132 mm")
+        focalLength35mm: (string) The focal length as 35mm equivalent (for example, "211 mm")
+        lens: (string) The lens (for example, "28.0-135.0 mm")
+        subjectDistance: (string) The subject distance (for example, "3.98 m")
+        dateTimeOriginal: (string) The date and time of capture (for example, "09/15/2005 17:32:50") Formatting can vary based on the user's localization settings
+        dateTimeDigitized: (string) The date and time of scanning (for example, "09/15/2005 17:32:50") Formatting can vary based on the user's localization settings
+        dateTime: (string) Adjusted date and time (for example, "09/15/2005 17:32:50") Formatting can vary based on the user's localization settings
+        cameraMake: (string) The camera manufacturer
+        cameraModel: (string) The camera model
+        cameraSerialNumber: (string) The camera serial number
+        artist: (string) The artist's name
+        software: (string) The software used to process/create photo
+        gps: (string) The location of this photo (for example, "37°56'10" N 27°20'42" E")
+        gpsAltitude: (string) The GPS altitude for this photo (for example, "82.3 m")
+        creator: (string) The name of the person that created this image
+        creatorJobTitle: (string) The job title of the person that created this image
+        creatorAddress: (string) The address for the person that created this image
+        creatorCity: (string) The city for the person that created this image
+        creatorStateProvince: (string) The state or province for the person that created this image
+        creatorPostalCode: (string) The postal code for the person that created this image
+        creatorCountry: (string) The country for the person that created this image
+        creatorPhone: (string) The phone number for the person that created this image
+        creatorEmail: (string) The email address for the person that created this image
+        creatorUrl: (string) The web URL for the person that created this image
+        headline: (string) A brief, publishable synopsis or summary of the contents of this image
+        iptcSubjectCode: (string) Values from the IPTC Subject NewsCode Controlled Vocabulary (see: http://www.newscodes.org/)
+        descriptionWriter: (string) The name of the person who wrote, edited or corrected the description of the image
+        iptcCategory: (string) Deprecated field; included for transferring legacy metadata
+        iptcOtherCategories: (string) Deprecated field; included for transferring legacy metadata
+        dateCreated: (string) The IPTC-formatted creation date (for example, "2005-09-20T15:10:55Z")
+        intellectualGenre: (string) A term to describe the nature of the image in terms of its intellectual or journalistic characteristics, such as daybook, or feature (examples at: http://www.newscodes.org/)
+        scene: (string) Values from the IPTC Scene NewsCodes Controlled Vocabulary (see: http://www.newscodes.org/)
+        location: (string) Details about a location shown in this image
+        city: (string) The name of the city shown in this image
+        stateProvince: (string) The name of the state shown in this image
+        country: (string) The name of the country shown in this image
+        isoCountryCode: (string) The 2 or 3 letter ISO 3166 Country Code of the country shown in this image
+        jobIdentifier: (string) A number or identifier needed for workflow control or tracking
+        instructions: (string) Information about embargoes, or other restrictions not covered by the Rights Usage field
+        provider: (string) Name of person who should be credited when this image is published
+        source: (string) The original owner of the copyright of this image
+        copyright: (string) The copyright text for this image
+        rightsUsageTerms: (string) Instructions on how this image can legally be used
+        copyrightInfoUrl
+
+    The following items are first supported in version 3.0 of the Lightroom SDK.
+
+        personShown: (string) Name of a person shown in this image
+        locationCreated: (table) The location where the photo was taken. Each element in the return table is a table which is a structure named LocationDetails as defined in the IPTC Extension spec. Definition details can be found at http://www.iptc.org/std/photometadata/2008/specification/.
+        locationShown: (table) The location shown in this image. Each element in the return table is a table which is a structure named LocationDetails as defined in the IPTC Extension spec. Definition details can be found at http://www.iptc.org/std/photometadata/2008/specification/.
+        nameOfOrgShown: (string) Name of the organization or company featured in this image
+        codeOfOrgShown: (string) Code from a controlled vocabulary for identifying the organization or company featured in this image
+        event: (string) Names or describes the specific event at which the photo was taken
+        artworksShown: (table) A set of metadata about artwork or an object in the image. Each element in the return table is a table which is a structure named ArtworkOrObjectDetails as defined in the IPTC Extension spec. Definition details can be found at http://www.iptc.org/std/photometadata/2008/specification/.
+        additionalModelInfo: (string) Information about the ethnicity and other facets of model(s) in a model-released image
+        modelAge: (string) Age of human model(s) at the time this image was taken in a model released image
+        minorModelAge: (string) Age of the youngest model pictured in the image, at the time that the image was made
+        modelReleaseStatus: (string) Summarizes the availability and scope of model releases authorizing usage of the likenesses of persons appearing in the photo
+        modelReleaseID: (string) A PLUS-ID identifying each Model Release
+        imageSupplier: (table) Identifies the most recent supplier of this image, who is not necessarily its owner or creator. Each element in the return table is a table which is a structure named ImageSupplierDetail defined in PLUS. Definition details can be found at http://ns.useplus.org/LDF/ldf-XMPReference.
+        registryId: (table) Both a Registry Item Id and a Registry Organization Id to record any registration of this photo with a registry. Each element in the return table is a table which is a structure named RegistryEntryDetail as defined in the IPTC Extension spec. Definition details can be found at http://www.iptc.org/std/photometadata/2008/specification/.
+        maxAvailWidth: (number) The maximum available width in pixels of the original photo from which this photo has been derived by downsizing
+        maxAvailHeight: (number) The maximum available height in pixels of the original photo from which this photo has been derived by downsizing
+        sourceType: (string) The type of the source of this digital image, selected from a controlled vocabulary
+        imageCreator: (table) Creator or creators of the image. Each element in the return table is a table which is a structure named ImageCreatorDetail defined in PLUS. Definition details can be found at http://ns.useplus.org/LDF/ldf-XMPReference.
+        copyrightOwner: (table) Owner or owners of the copyright in the licensed image. Each element in the return table is a table which is a structure named CopyrightOwnerDetail defined in PLUS. Definition details can be found at http://ns.useplus.org/LDF/ldf-XMPReference.
+        licensor: (table) A person or company that should be contacted to obtain a license for using the photo, or who has licensed the photo. Each element in the return table is a table which is a structure named LicensorDetail defined in PLUS. Definition details can be found at http://ns.useplus.org/LDF/ldf-XMPReference.
+        propertyReleaseID: (string) A PLUS-ID identifying each Property Release
+        propertyReleaseStatus: (string) Summarizes the availability and scope of property releases authorizing usage of the likenesses of persons appearing in the image.
+        digImageGUID: (string) Globally unique identifier for the item, created and applied by the creator of the item at the time of its creation
+        plusVersion: (string) The version number of the PLUS standards in place at the time of the transaction
+        
+--]]
+local _transferFormattedMetadata = {}
+-- _transferFormattedMetadata['intellectualGenre'] = { 'my_edit_history', "" }
+
+
+
+--[[
+        Rarely does one need to transfer raw metadata, but just in case...
+--]]
+local _transferRawMetadata = {}
+-- _transferRawMetadata['rating'] = { 'my_content_notes', 0 }
+
+
+
+--[[
+        *** Instructions: Follow example...
+        
+        If you need to do more than one plugin, then do a second pass, or define another preset to transfer
+        the other plugin.
+        
+        pluginId - source plugin ID (target plugin is this one).
+        sourceId - source plugin property "name"(ID)
+        targetId - name(Id) of custom metadata property in this plugin.
+        
+        Note: You can't set/clear metadata of another plugin, only oneself can write (anyone can read).
+--]]
+local _transferPluginMetadata = { pluginId='com.robcole.lightroom.metadata.RC_CustomMetadata' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='groups', targetId= 'groups' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_properties', targetId= 'my_properties' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_notes_private', targetId= 'my_notes_private' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_notes_public', targetId= 'my_notes_public' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_to_do', targetId= 'my_to_do' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_edit_history', targetId= 'my_edit_history' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_source_notes', targetId= 'my_source_notes' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_content_notes', targetId= 'my_content_notes' }
+_transferPluginMetadata[#_transferPluginMetadata + 1] = { sourceId='my_states', targetId= 'my_states' }
+
+
+
+
+--[[
+        *** Instructions: Assign items to configure, or comment out, as desired:
+--]]
+_t.exportCsv = _exportCsv
+_t.importCsv = _importCsv
+_t.metadataSaveExclusions = _metadataSaveExclusions
+-- _t.metadataSaveInclusions = _metadataSaveInclusions
+_t.transferFormattedMetadata = _transferFormattedMetadata
+-- _t.transferRawMetadata = _transferRawMetadata
+_t.transferPluginMetadata = _transferPluginMetadata
+
+
+
+-- define field IDs for custom metadata to be transferred via export filter, if any.
+-- (see "Metadata.lua" file for IDs)
+_t.exportCustomMetadata = {
+    groups = false,             -- sync manually if desired
+    my_properties = true,       -- ditto
+    my_notes_private = true,
+    my_notes_public = true,
+    my_to_do = false,           -- ditto
+    my_edit_history = true,
+    my_source_notes = true,
+    my_content_notes = true,
+    my_states = false,          -- ditto
+}
+
+
+
+--[[
+        *** Instructions: Do not change this line:
+--]]
+return _t -- return configuration table
+
+
